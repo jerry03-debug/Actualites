@@ -1,0 +1,124 @@
+<definitions name="UtilisateurService"
+    targetNamespace="http://www.examples.com/wsdl/UtilisateurService.wsdl"
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://www.examples.com/wsdl/UtilisateurService.wsdl"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <message name="listUtilisateursRequest"/>
+    <message name="listUtilisateursResponse">
+        <part name="utilisateurs" type="xsd:string"/>
+    </message>
+
+    <message name="createUtilisateurRequest">
+        <part name="nom" type="xsd:string"/>
+        <part name="email" type="xsd:string"/>
+        <part name="motDePasse" type="xsd:string"/>
+        <part name="role" type="xsd:string"/>
+    </message>
+    <message name="createUtilisateurResponse">
+        <part name="id" type="xsd:int"/>
+    </message>
+
+    <message name="deleteUtilisateurRequest">
+        <part name="id" type="xsd:int"/>
+    </message>
+    <message name="deleteUtilisateurResponse">
+        <part name="message" type="xsd:string"/>
+    </message>
+
+    <message name="updateUtilisateurRequest">
+        <part name="id" type="xsd:int"/>
+        <part name="data" type="xsd:string"/>
+    </message>
+    <message name="updateUtilisateurResponse">
+        <part name="message" type="xsd:string"/>
+    </message>
+
+    <message name="authenticateUtilisateurRequest">
+        <part name="email" type="xsd:string"/>
+        <part name="motDePasse" type="xsd:string"/>
+    </message>
+    <message name="authenticateUtilisateurResponse">
+        <part name="auth" type="xsd:boolean"/>
+        <part name="token" type="xsd:string"/>
+    </message>
+
+    <portType name="UtilisateurServicePortType">
+        <operation name="listUtilisateurs">
+            <input message="tns:listUtilisateursRequest"/>
+            <output message="tns:listUtilisateursResponse"/>
+        </operation>
+        <operation name="createUtilisateur">
+            <input message="tns:createUtilisateurRequest"/>
+            <output message="tns:createUtilisateurResponse"/>
+        </operation>
+        <operation name="deleteUtilisateur">
+            <input message="tns:deleteUtilisateurRequest"/>
+            <output message="tns:deleteUtilisateurResponse"/>
+        </operation>
+        <operation name="updateUtilisateur">
+            <input message="tns:updateUtilisateurRequest"/>
+            <output message="tns:updateUtilisateurResponse"/>
+        </operation>
+        <operation name="authenticateUtilisateur">
+            <input message="tns:authenticateUtilisateurRequest"/>
+            <output message="tns:authenticateUtilisateurResponse"/>
+        </operation>
+    </portType>
+
+    <binding name="UtilisateurServiceSoapBinding" type="tns:UtilisateurServicePortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <operation name="listUtilisateurs">
+            <soap:operation soapAction="listUtilisateurs"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="createUtilisateur">
+            <soap:operation soapAction="createUtilisateur"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="deleteUtilisateur">
+            <soap:operation soapAction="deleteUtilisateur"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="updateUtilisateur">
+            <soap:operation soapAction="updateUtilisateur"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+        <operation name="authenticateUtilisateur">
+            <soap:operation soapAction="authenticateUtilisateur"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <service name="UtilisateurService">
+        <port name="UtilisateurServiceSoapPort" binding="tns:UtilisateurServiceSoapBinding">
+            <soap:address location="http://localhost:4000/wsdl"/>
+        </port>
+    </service>
+</definitions>
