@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const db = require('./config/database');
-const Utilisateur = require('../Models/utilisateur');
+const Utilisateur = require('../Models/domaine/utilisateur');
 
 const app = express();
 const PORT = process.env.PORT || 4000;

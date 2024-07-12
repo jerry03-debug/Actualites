@@ -1,11 +1,11 @@
-const Article = require('../Models/article');
+const Article = require('../Models/domaine/ArticleDAO');
 
 exports.getAllArticles = (req, res) => {
     Article.getAll((err, results) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.json(results);
+        res.render('articles/index', { articles: results });
     });
 };
 
@@ -15,20 +15,20 @@ exports.getArticleById = (req, res) => {
         if (err) {
             return res.status(500).send(err);
         }
-        if (results.length === 0) {
+        if (!results) {
             return res.status(404).send('Article not found');
         }
-        res.json(results[0]);
+        res.render('articles/show', { article: results });
     });
 };
 
 exports.createArticle = (req, res) => {
     const data = req.body;
-    Article.create(data, (err, results) => {
+    Article.create(data, (err, article) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.status(201).json({ id: results.insertId });
+        res.redirect('/articles');
     });
 };
 
@@ -39,7 +39,7 @@ exports.updateArticle = (req, res) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.sendStatus(204);
+        res.redirect(`/articles/${id}`);
     });
 };
 
@@ -49,6 +49,6 @@ exports.deleteArticle = (req, res) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.sendStatus(204);
+        res.redirect('/articles');
     });
 };

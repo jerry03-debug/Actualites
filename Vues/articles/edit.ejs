@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modifier l'article</title>
+</head>
+<body>
+    <h1>Modifier l'article</h1>
+    <form action="/articles/<%= article.id %>" method="POST">
+        <input type="hidden" name="_method" value="PUT">
+        
+        <label for="titre">Titre:</label>
+        <input type="text" id="titre" name="titre" value="<%= article.titre %>" required><br>
+        
+        <label for="contenu">Contenu:</label>
+        <textarea id="contenu" name="contenu" required><%= article.contenu %></textarea><br>
+        
+        <label for="categorieId">Catégorie:</label>
+        <input type="number" id="categorieId" name="categorieId" value="<%= article.categorieId %>" required><br>
+        
+        <label for="auteurId">Auteur:</label>
+        <input type="number" id="auteurId" name="auteurId" value="<%= article.auteurId %>" required><br>
+        
+        <button type="submit">Enregistrer les modifications</button>
+    </form>
+</body>
+</html>

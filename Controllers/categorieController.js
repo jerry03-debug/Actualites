@@ -1,11 +1,11 @@
-const Categorie = require('../Models/categorie');
+const Categorie = require('../Models/domaine/CategorieDAO');
 
 exports.getAllCategories = (req, res) => {
     Categorie.getAll((err, results) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.json(results);
+        res.render('categories/index', { categories: results });
     });
 };
 
@@ -15,20 +15,20 @@ exports.getCategorieById = (req, res) => {
         if (err) {
             return res.status(500).send(err);
         }
-        if (results.length === 0) {
+        if (!results) {
             return res.status(404).send('Categorie not found');
         }
-        res.json(results[0]);
+        res.render('categories/show', { categorie: results });
     });
 };
 
 exports.createCategorie = (req, res) => {
     const data = req.body;
-    Categorie.create(data, (err, results) => {
+    Categorie.create(data, (err, categorie) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.status(201).json({ id: results.insertId });
+        res.redirect('/categories');
     });
 };
 
@@ -39,7 +39,7 @@ exports.updateCategorie = (req, res) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.sendStatus(204);
+        res.redirect(`/categories/${id}`);
     });
 };
 
@@ -49,6 +49,6 @@ exports.deleteCategorie = (req, res) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.sendStatus(204);
+        res.redirect('/categories');
     });
 };

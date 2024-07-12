@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Catégories</title>
+</head>
+<body>
+    <h1>Liste des catégories</h1>
+    <a href="/categories/create">Créer une nouvelle catégorie</a>
+    <ul>
+        <% categories.forEach(categorie => { %>
+            <li>
+                <a href="/categories/<%= categorie.id %>"><%= categorie.libelle %></a>
+                <a href="/categories/<%= categorie.id %>/edit">Modifier</a>
+                <form action="/categories/<%= categorie.id %>" method="POST" style="display:inline;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </li>
+        <% }) %>
+    </ul>
+</body>
+</html>

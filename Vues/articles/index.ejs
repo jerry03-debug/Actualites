@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Articles</title>
+</head>
+<body>
+    <h1>Liste des articles</h1>
+    <a href="/articles/create">Créer un nouvel article</a>
+    <ul>
+        <% articles.forEach(article => { %>
+            <li>
+                <a href="/articles/<%= article.id %>"><%= article.titre %></a>
+                <a href="/articles/<%= article.id %>/edit">Modifier</a>
+                <form action="/articles/<%= article.id %>" method="POST" style="display:inline;">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit">Supprimer</button>
+                </form>
+            </li>
+        <% }) %>
+    </ul>
+</body>
+</html>

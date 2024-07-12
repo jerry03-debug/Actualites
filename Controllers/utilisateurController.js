@@ -1,32 +1,32 @@
-const Utilisateur = require('../Models/utilisateur');
+const Utilisateur = require('../Models/domaine/UtilisateurDAO');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
 exports.register = (req, res) => {
     const data = req.body;
-    Utilisateur.create(data, (err, results) => {
+    Utilisateur.create(data, (err, utilisateur) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.status(201).json({ id: results.insertId });
+        res.redirect('/utilisateurs/login');
     });
 };
 
 exports.login = (req, res) => {
     const { email, motDePasse } = req.body;
-    Utilisateur.getByEmail(email, (err, results) => {
+    Utilisateur.getByEmail(email, (err, utilisateur) => {
         if (err) {
             return res.status(500).send(err);
         }
-        if (results.length === 0) {
+        if (!utilisateur) {
             return res.status(404).send('Utilisateur non trouvé');
         }
-        const utilisateur = results[0];
         const passwordIsValid = bcrypt.compareSync(motDePasse, utilisateur.motDePasse);
         if (!passwordIsValid) {
             return res.status(401).send('Mot de passe incorrect');
         }
         const token = jwt.sign({ id: utilisateur.id, role: utilisateur.role }, 'secret_key', { expiresIn: 86400 });
-        res.status(200).json({ auth: true, token });
+        res.status(200).render('utilisateurs/profile', { auth: true, token });
     });
 };
 
