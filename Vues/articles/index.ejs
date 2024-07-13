@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 ">
+<body class="bg-gray-100">
     <div class="flex flex-col items-center mx-auto">
         <!-- Navbar -->
         <nav class="flex p-4 bg-white w-full shadow-md items-center justify-between mb-8">
@@ -34,20 +34,26 @@
             <li class="bg-white shadow-md rounded-lg p-6 text-center mb-4">
                 <a href="/articles/<%= article.id %>"
                     class="text-blue-500 hover:underline font-semibold text-lg"><%= article.titre %></a>
-                <p class="d-block w-60 mx-auto overflow-hidden whitespace-nowrap " style="text-overflow: ellipsis;"> <%= article.contenu %></p>    
-                <!-- Actions possibles sur l'article (Edit, Delete) -->
-                <!-- <div class="mt-2">
-                    <a href="/articles/<%= article.id %>/edit"
-                        class="inline-block bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</a>
-                    <form action="/articles/<%= article.id %>/delete" method="post" class="inline">
-                        <button type="submit"
-                            class="inline-block bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
-                    </form>
-                </div> -->
+                <p class="d-block w-60 mx-auto overflow-hidden whitespace-nowrap " style="text-overflow: ellipsis;">
+                    <%= article.contenu %>
+                </p>
+                <p class="text-gray-500 mb-2">Créé le : <%= new Date(article.dateCreation).toLocaleDateString('fr-FR', {
+                    year: 'numeric', month: 'long', day: 'numeric'
+                }) %></p>
             </li>
             <% }); %>
             <% } %>
         </ul>
+
+        <!-- Pagination buttons -->
+        <div class="flex justify-between mt-8 w-2/3">
+            <a href="/articles?page=<%= currentPage - 1 %>"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded <%= currentPage === 1 ? 'cursor-not-allowed opacity-50' : '' %>"
+                <%= currentPage === 1 ? 'tabindex="-1"' : '' %>>Précédent</a>
+            <a href="/articles?page=<%= currentPage + 1 %>"
+                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded <%= currentPage === totalPages ? 'cursor-not-allowed opacity-50' : '' %>"
+                <%= currentPage === totalPages ? 'tabindex="-1"' : '' %>>Suivant</a>
+        </div>
     </div>
 </body>
 

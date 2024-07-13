@@ -57,6 +57,20 @@ class ArticleDAO {
     static delete(id, callback) {
         db.query('DELETE FROM Article WHERE id = ?', [id], callback);
     }
+    static getPreviousArticle(id, callback) {
+        db.query('SELECT * FROM Article WHERE id < ? ORDER BY id DESC LIMIT 1', [id], (err, results) => {
+            if (err) return callback(err);
+            callback(null, results[0]);
+        });
+    }
+
+    static getNextArticle(id, callback) {
+        db.query('SELECT * FROM Article WHERE id > ? ORDER BY id ASC LIMIT 1', [id], (err, results) => {
+            if (err) return callback(err);
+            callback(null, results[0]);
+        });
+    }
 }
+
 
 module.exports = ArticleDAO;

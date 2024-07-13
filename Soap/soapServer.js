@@ -1,10 +1,12 @@
 const soap = require('soap');
+const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const db = require('./config/database');
-const Utilisateur = require('../Models/domaine/utilisateur');
+const db = require('../Config/database');  // Chemin corrigé
+const UtilisateurDAO = require('../Models/DAO/UtilisateurDAO');  // Chemin corrigé
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -16,59 +18,59 @@ const service = {
     UtilisateurService: {
         UtilisateurServiceSoapPort: {
             listUtilisateurs: (args, callback) => {
-                Utilisateur.getAll((err, results) => {
+                UtilisateurDAO.getAll((err, results) => {
                     if (err) {
                         callback({ message: err.message });
                     } else {
-                        callback({ utilisateurs: results });
+                        callback(null, { utilisateurs: results });
                     }
                 });
             },
             createUtilisateur: (args, callback) => {
                 const data = args;
-                Utilisateur.create(data, (err, results) => {
+                UtilisateurDAO.create(data, (err, results) => {
                     if (err) {
                         callback({ message: err.message });
                     } else {
-                        callback({ id: results.insertId });
+                        callback(null, { id: results.id });
                     }
                 });
             },
             deleteUtilisateur: (args, callback) => {
                 const { id } = args;
-                Utilisateur.delete(id, (err) => {
+                UtilisateurDAO.delete(id, (err) => {
                     if (err) {
                         callback({ message: err.message });
                     } else {
-                        callback({ message: 'Utilisateur supprimé' });
+                        callback(null, { message: 'Utilisateur supprimé' });
                     }
                 });
             },
             updateUtilisateur: (args, callback) => {
-                const { id, data } = args;
-                Utilisateur.update(id, data, (err) => {
+                const { id, nom, email, motDePasse, role } = args;
+                const data = { nom, email, motDePasse, role };
+                UtilisateurDAO.update(id, data, (err) => {
                     if (err) {
                         callback({ message: err.message });
                     } else {
-                        callback({ message: 'Utilisateur mis à jour' });
+                        callback(null, { message: 'Utilisateur mis à jour' });
                     }
                 });
             },
             authenticateUtilisateur: (args, callback) => {
                 const { email, motDePasse } = args;
-                Utilisateur.getByEmail(email, (err, results) => {
+                UtilisateurDAO.getByEmail(email, (err, utilisateur) => {
                     if (err) {
                         callback({ message: err.message });
-                    } else if (results.length === 0) {
+                    } else if (!utilisateur) {
                         callback({ message: 'Utilisateur non trouvé' });
                     } else {
-                        const utilisateur = results[0];
                         const passwordIsValid = bcrypt.compareSync(motDePasse, utilisateur.motDePasse);
                         if (!passwordIsValid) {
                             callback({ message: 'Mot de passe incorrect' });
                         } else {
                             const token = jwt.sign({ id: utilisateur.id, role: utilisateur.role }, 'secret_key', { expiresIn: 86400 });
-                            callback({ auth: true, token });
+                            callback(null, { auth: true, token });
                         }
                     }
                 });
@@ -78,7 +80,7 @@ const service = {
 };
 
 // Définir le WSDL du service
-const xml = require('fs').readFileSync('service.wsdl', 'utf8');
+const xml = fs.readFileSync(path.join(__dirname, 'service.wsdl'), 'utf8');
 
 app.listen(PORT, () => {
     soap.listen(app, '/wsdl', service, xml, () => {

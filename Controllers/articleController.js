@@ -2,24 +2,39 @@ const ArticleDAO = require('../Models/DAO/ArticleDAO');
 const CategorieDAO = require('../Models/DAO/CategorieDAO');
 const ejs = require('ejs');
 
+const ITEMS_PER_PAGE = 2;
+
 exports.getAllArticles = (req, res) => {
+    const page = parseInt(req.query.page) || 1; // Récupérer le numéro de page à partir de la requête, par défaut 1
+
     ArticleDAO.getAll((err, results) => {
         if (err) {
             return res.status(500).send(err);
         }
+
         CategorieDAO.getAll((err, categories) => {
             if (err) {
                 return res.status(500).send(err);
             }
-            ejs.renderFile('Vues/articles/index.ejs', { articles: results, categories: categories }, (err, html) => {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-                res.send(html);
+
+            // Pagination logic
+            const totalItems = results.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            const startIndex = (page - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const articles = results.slice(startIndex, endIndex);
+           
+             // Utiliser res.render pour rendre la vue
+             res.render('articles/index', {
+                articles: articles,
+                categories: categories,
+                currentPage: page,
+                totalPages: totalPages
             });
         });
     });
 };
+
 
 
 exports.getArticlesByCategory = (req, res) => {
@@ -32,15 +47,11 @@ exports.getArticlesByCategory = (req, res) => {
             if (err) {
                 return res.status(500).send(err);
             }
-            ejs.renderFile('Vues/articles/index.ejs', { articles: results, categories: categories }, (err, html) => {
-                if (err) {
-                    return res.status(500).send(err);
-                }
-                res.send(html);
-            });
+            res.render('articles/index.ejs', { articles: results, categories: categories,currentPage:1,totalPages:3});
         });
     });
 };
+
 
 exports.getArticleById = (req, res) => {
     const { id } = req.params;
@@ -51,11 +62,17 @@ exports.getArticleById = (req, res) => {
         if (!result) {
             return res.status(404).send('Article not found');
         }
-        ejs.renderFile('Vues/articles/show.ejs', { article: result }, (err, html) => {
+
+        CategorieDAO.getAll((err, categories) => {
             if (err) {
                 return res.status(500).send(err);
             }
-            res.send(html);
+            ejs.renderFile('Vues/articles/show.ejs', { article: result, categories: categories }, (err, html) => {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.send(html);
+            });
         });
     });
 };
@@ -88,5 +105,32 @@ exports.deleteArticle = (req, res) => {
             return res.status(500).send(err);
         }
         res.redirect('/articles');
+    });
+};
+
+
+exports.getPreviousArticle = (req, res) => {
+    const { id } = req.params;
+    ArticleDAO.getPreviousArticle(id, (err, article) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        if (!article) {
+            return res.redirect(`/articles/${id}`);
+        }
+        res.redirect(`/articles/${article.id}`);
+    });
+};
+
+exports.getNextArticle = (req, res) => {
+    const { id } = req.params;
+    ArticleDAO.getNextArticle(id, (err, article) => {
+        if (err) {
+            return res.status(500).send(err);
+        }
+        if (!article) {
+            return res.redirect(`/articles/${id}`);
+        }
+        res.redirect(`/articles/${article.id}`);
     });
 };

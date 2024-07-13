@@ -4,6 +4,20 @@ const Utilisateur = require('../domaine/utilisateur');
 const bcrypt = require('bcryptjs');
 
 class UtilisateurDAO {
+    static findByEmail(email, callback) {
+        db.query('SELECT * FROM Utilisateur WHERE email = ?', [email], (err, results) => {
+            if (err) return callback(err);
+            if (results.length === 0) return callback(null, null);
+            const user = {
+                id: results[0].id,
+                nom: results[0].nom,
+                email: results[0].email,
+                motDePasse: results[0].motDePasse,
+                role: results[0].role
+            };
+            callback(null, user);
+        });
+    }
     static getAll(callback) {
         db.query('SELECT * FROM Utilisateur', (err, results) => {
             if (err) return callback(err);
