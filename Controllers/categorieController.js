@@ -1,24 +1,35 @@
-const Categorie = require('../Models/domaine/CategorieDAO');
+const Categorie = require('../Models/domaine/categorie');
+const ejs = require('ejs');
 
 exports.getAllCategories = (req, res) => {
     Categorie.getAll((err, results) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.render('categories/index', { categories: results });
+        ejs.renderFile('Vues/categories/index.ejs', { categories: results }, (err, html) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            res.send(html);
+        });
     });
 };
 
 exports.getCategorieById = (req, res) => {
     const { id } = req.params;
-    Categorie.getById(id, (err, results) => {
+    Categorie.getById(id, (err, result) => {
         if (err) {
             return res.status(500).send(err);
         }
-        if (!results) {
+        if (!result) {
             return res.status(404).send('Categorie not found');
         }
-        res.render('categories/show', { categorie: results });
+        ejs.renderFile('Vues/categories/show.ejs', { categorie: result }, (err, html) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            res.send(html);
+        });
     });
 };
 

@@ -1,6 +1,6 @@
 // dao/UtilisateurDAO.js
-const db = require('../Config/database');
-const Utilisateur = require('../models/Utilisateur');
+const db = require('../../Config/database');
+const Utilisateur = require('../domaine/utilisateur');
 const bcrypt = require('bcryptjs');
 
 class UtilisateurDAO {

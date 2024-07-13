@@ -1,6 +1,6 @@
 // dao/CategorieDAO.js
-const db = require('../Config/database');
-const Categorie = require('../models/Categorie');
+const db = require('../../Config/database'); 
+const Categorie = require('../domaine/categorie');
 
 class CategorieDAO {
     static getAll(callback) {

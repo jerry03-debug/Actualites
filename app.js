@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const articleRoutes = require('./routes/articleRoutes');
-const categorieRoutes = require('./routes/categorieRoutes');
-const utilisateurRoutes = require('./routes/utilisateurRoutes');
+const articleRoutes = require('./Routes/articleRoutes');
+const categorieRoutes = require('./Routes/categorieRoutes');
+const utilisateurRoutes = require('./Routes/utilisateurRoutes');
+const db = require('./Config/database'); 
+
 
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));

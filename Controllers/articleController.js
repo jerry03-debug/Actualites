@@ -1,30 +1,68 @@
-const Article = require('../Models/domaine/ArticleDAO');
+const ArticleDAO = require('../Models/DAO/ArticleDAO');
+const CategorieDAO = require('../Models/DAO/CategorieDAO');
+const ejs = require('ejs');
 
 exports.getAllArticles = (req, res) => {
-    Article.getAll((err, results) => {
+    ArticleDAO.getAll((err, results) => {
         if (err) {
             return res.status(500).send(err);
         }
-        res.render('articles/index', { articles: results });
+        CategorieDAO.getAll((err, categories) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            ejs.renderFile('Vues/articles/index.ejs', { articles: results, categories: categories }, (err, html) => {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.send(html);
+            });
+        });
+    });
+};
+
+
+exports.getArticlesByCategory = (req, res) => {
+    const { id } = req.params; // Récupère l'ID de la catégorie depuis les paramètres d'URL
+    ArticleDAO.getByCategory(id, (err, results) => { 
+        if (err) {
+            return res.status(500).send(err);
+        }
+        CategorieDAO.getAll((err, categories) => { // Récupère toutes les catégories pour le menu de navigation
+            if (err) {
+                return res.status(500).send(err);
+            }
+            ejs.renderFile('Vues/articles/index.ejs', { articles: results, categories: categories }, (err, html) => {
+                if (err) {
+                    return res.status(500).send(err);
+                }
+                res.send(html);
+            });
+        });
     });
 };
 
 exports.getArticleById = (req, res) => {
     const { id } = req.params;
-    Article.getById(id, (err, results) => {
+    ArticleDAO.getById(id, (err, result) => {
         if (err) {
             return res.status(500).send(err);
         }
-        if (!results) {
+        if (!result) {
             return res.status(404).send('Article not found');
         }
-        res.render('articles/show', { article: results });
+        ejs.renderFile('Vues/articles/show.ejs', { article: result }, (err, html) => {
+            if (err) {
+                return res.status(500).send(err);
+            }
+            res.send(html);
+        });
     });
 };
 
 exports.createArticle = (req, res) => {
     const data = req.body;
-    Article.create(data, (err, article) => {
+    ArticleDAO.create(data, (err, article) => {
         if (err) {
             return res.status(500).send(err);
         }
@@ -35,7 +73,7 @@ exports.createArticle = (req, res) => {
 exports.updateArticle = (req, res) => {
     const { id } = req.params;
     const data = req.body;
-    Article.update(id, data, (err) => {
+    ArticleDAO.update(id, data, (err) => {
         if (err) {
             return res.status(500).send(err);
         }
@@ -45,7 +83,7 @@ exports.updateArticle = (req, res) => {
 
 exports.deleteArticle = (req, res) => {
     const { id } = req.params;
-    Article.delete(id, (err) => {
+    ArticleDAO.delete(id, (err) => {
         if (err) {
             return res.status(500).send(err);
         }
